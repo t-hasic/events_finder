@@ -8,6 +8,4 @@ Web app to test various events finder hypotheses:
 
 # Quickstart
 
-`cd events-finder-comparison`
-
 `npm run dev`
