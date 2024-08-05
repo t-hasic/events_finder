@@ -522,3 +522,9 @@
 .activity-link:hover {
   text-decoration: underline;
 }
+
+.feedback-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
