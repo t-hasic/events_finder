@@ -69,11 +69,17 @@ function FeatureSearch() {
   };
 
   const handleInputSubmit = async () => {
+    setActivities([]);
     setIsLoading(true);
     const activeFilters = filters.filter((filter) => filter.isActive);
     const tag_ids = activeFilters.map((filter) => filter.id);
     if (!inputValue) {
       alert("Please enter a query");
+      setIsLoading(false);
+      return;
+    } else if (inputValue.length < 2) {
+      alert("Please enter a query with at least 2 characters");
+      setIsLoading(false);
       return;
     }
     const payload = {
