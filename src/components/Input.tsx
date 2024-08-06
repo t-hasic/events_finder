@@ -23,6 +23,7 @@ function Input({
   const cityOptions = [{ value: "Boston", label: "Boston" }];
 
   const timeOptions = [
+    { value: "", label: "Select Time" },
     { value: "morning", label: "Morning" },
     { value: "afternoon", label: "Afternoon" },
     { value: "evening", label: "Evening" },

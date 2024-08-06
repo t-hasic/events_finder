@@ -20,10 +20,8 @@ function FeatureSearch() {
   const [isLoading, setIsLoading] = useState(true);
   const [giveFeedback, setGiveFeedback] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [dateValue, setDateValue] = useState(
-    new Date().toISOString().split("T")[0]
-  );
-  const [timeValue, setTimeValue] = useState("morning");
+  const [dateValue, setDateValue] = useState("");
+  const [timeValue, setTimeValue] = useState("");
   const [filters, setFilters] = useState<Filter[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
 
@@ -39,7 +37,7 @@ function FeatureSearch() {
         }));
         setFilters(filtersData);
         const payload = {
-          query: "event",
+          query: "",
           start_date: dateValue,
           start_time: timeValue,
           tag_ids: [],
