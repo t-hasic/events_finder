@@ -20,8 +20,8 @@ function FeatureSearch() {
   const [isLoading, setIsLoading] = useState(true);
   const [giveFeedback, setGiveFeedback] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [dateValue, setDateValue] = useState("");
-  const [timeValue, setTimeValue] = useState("");
+  const [dateValue, setDateValue] = useState(null);
+  const [timeValue, setTimeValue] = useState(null);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
 
@@ -37,9 +37,9 @@ function FeatureSearch() {
         }));
         setFilters(filtersData);
         const payload = {
-          query: "",
-          start_date: dateValue,
-          start_time: timeValue,
+          query: null,
+          start_date: null,
+          start_time: null,
           tag_ids: [],
         };
         console.log("Payload: ", payload);
@@ -115,11 +115,11 @@ function FeatureSearch() {
     );
   };
 
-  const handleDateChange = (date: string) => {
+  const handleDateChange = (date: any) => {
     setDateValue(date);
   };
 
-  const handleTimeChange = (time: string) => {
+  const handleTimeChange = (time: any) => {
     setTimeValue(time);
   };
 

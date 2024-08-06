@@ -8,8 +8,8 @@ interface Props {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void;
   onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  onDateChange: (date: string) => void;
-  onTimeChange: (time: string) => void;
+  onDateChange: (date: any) => void;
+  onTimeChange: (time: any) => void;
 }
 
 function Input({
@@ -23,21 +23,21 @@ function Input({
   const cityOptions = [{ value: "Boston", label: "Boston" }];
 
   const timeOptions = [
-    { value: "", label: "Select Time" },
+    { value: null, label: "Select Time" },
     { value: "morning", label: "Morning" },
     { value: "afternoon", label: "Afternoon" },
     { value: "evening", label: "Evening" },
   ];
 
-  const handleDateChange = (date: string) => {
+  const handleDateChange = (date: any) => {
     onDateChange(date);
   };
 
-  const handleTimeChange = (option: { value: string; label: string }) => {
+  const handleTimeChange = (option: { value: any; label: any }) => {
     onTimeChange(option.value);
   };
 
-  const handleSelect = (option: { value: string; label: string }) => {
+  const handleSelect = (option: { value: any; label: any }) => {
     console.log(`Selected option: ${option.label}`);
   };
 

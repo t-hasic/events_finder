@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 interface DropdownOption {
-  value: string;
-  label: string;
+  value: any;
+  label: any;
 }
 
 interface FilterDropdownProps {
