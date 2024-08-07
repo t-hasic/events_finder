@@ -4,7 +4,7 @@ import FilterDropdown from "./FilterDropdown";
 import FilterDateEntry from "./FilterDateEntry";
 
 interface Props {
-  value: string;
+  value: any;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void;
   onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;

@@ -12,7 +12,7 @@ import axios from "axios";
 
 interface Filter {
   id: any;
-  code: string;
+  code: any;
   isActive: boolean;
 }
 
@@ -69,19 +69,14 @@ function FeatureSearch() {
   const handleInputSubmit = async () => {
     setActivities([]);
     setIsLoading(true);
+    let input: any = inputValue;
+    if (inputValue === "") {
+      input = null;
+    }
     const activeFilters = filters.filter((filter) => filter.isActive);
     const tag_ids = activeFilters.map((filter) => filter.id);
-    if (!inputValue) {
-      alert("Please enter a query");
-      setIsLoading(false);
-      return;
-    } else if (inputValue.length < 2) {
-      alert("Please enter a query with at least 2 characters");
-      setIsLoading(false);
-      return;
-    }
     const payload = {
-      query: inputValue,
+      query: input,
       start_date: dateValue,
       start_time: timeValue,
       tag_ids: tag_ids,
@@ -107,16 +102,52 @@ function FeatureSearch() {
     }
   };
 
+  const updateResults = async () => {
+    setActivities([]);
+    setIsLoading(true);
+    let input: any = inputValue;
+    if (inputValue === "") {
+      input = null;
+    }
+    const activeFilters = filters.filter((filter) => filter.isActive);
+    const tag_ids = activeFilters.map((filter) => filter.id);
+    const payload = {
+      query: input,
+      start_date: dateValue,
+      start_time: timeValue,
+      tag_ids: tag_ids,
+    };
+    console.log("Payload: ", payload);
+    try {
+      const response = await axios.post(
+        "http://ec2-54-90-82-170.compute-1.amazonaws.com:9000/v1/events/search",
+        payload
+      );
+      console.log(response.data.activities);
+      setActivities(response.data.activities);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+    setIsLoading(false);
+    console.log(filters);
+  };
+
   const handleFilterToggle = (isActive: boolean, id: any) => {
     setFilters(
       filters.map((filter) =>
-        filter.id === id ? { ...filter, isActive } : filter
+        filter.id === id ? { ...filter, isActive: isActive } : filter
       )
     );
+    console.log(filters);
+    // updateResults();
   };
 
   const handleDateChange = (date: any) => {
-    setDateValue(date);
+    if (date === "") {
+      setDateValue(null);
+    } else {
+      setDateValue(date);
+    }
   };
 
   const handleTimeChange = (time: any) => {
