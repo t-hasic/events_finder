@@ -102,36 +102,6 @@ function FeatureSearch() {
     }
   };
 
-  const updateResults = async () => {
-    setActivities([]);
-    setIsLoading(true);
-    let input: any = inputValue;
-    if (inputValue === "") {
-      input = null;
-    }
-    const activeFilters = filters.filter((filter) => filter.isActive);
-    const tag_ids = activeFilters.map((filter) => filter.id);
-    const payload = {
-      query: input,
-      start_date: dateValue,
-      start_time: timeValue,
-      tag_ids: tag_ids,
-    };
-    console.log("Payload: ", payload);
-    try {
-      const response = await axios.post(
-        "http://ec2-54-90-82-170.compute-1.amazonaws.com:9000/v1/events/search",
-        payload
-      );
-      console.log(response.data.activities);
-      setActivities(response.data.activities);
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    }
-    setIsLoading(false);
-    console.log(filters);
-  };
-
   const handleFilterToggle = (isActive: boolean, id: any) => {
     setFilters(
       filters.map((filter) =>
