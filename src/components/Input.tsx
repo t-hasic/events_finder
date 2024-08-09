@@ -5,7 +5,7 @@ import FilterDateEntry from "./FilterDateEntry";
 interface Props {
   value: any;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onSubmit: () => void;
+  onSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onFeedback: () => void;
   onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onDateChange: (date: any) => void;

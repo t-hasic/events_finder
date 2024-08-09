@@ -30,6 +30,7 @@ function FeatureSearch() {
   const [pageLoading, setPageLoading] = useState(false);
   const [activities, setActivities] = useState<any[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,7 +93,6 @@ function FeatureSearch() {
         "http://ec2-54-90-82-170.compute-1.amazonaws.com:9000/v1/events/search",
         payload
       );
-      console.log(response.data.activities);
       if (response.data.activities.length === 0) {
         setHasMoreData(false);
       } else {
@@ -144,16 +144,29 @@ function FeatureSearch() {
     setShowFeedback(!showFeedback);
   };
 
-  const handleInputSubmit = async () => {
+  const handleInputSubmit = async (
+    filtersOrEvent: Filter[] | React.MouseEvent
+  ) => {
+    let currentFilters: Filter[];
+
+    if (Array.isArray(filtersOrEvent)) {
+      currentFilters = filtersOrEvent;
+    } else {
+      currentFilters = filters; // Use the current filters from state
+    }
+
+    console.log("Current filters:", currentFilters);
+
     setActivities([]);
     setIsLoading(true);
-    setHasMoreData(true); // Reset hasMoreData
-    setPage(1); // Reset page to 1
+    setHasMoreData(true);
+    setPage(1);
     let input: any = inputValue;
     if (inputValue === "") {
       input = null;
     }
-    const activeFilters = filters.filter((filter) => filter.isActive);
+
+    const activeFilters = currentFilters.filter((filter) => filter.isActive);
     const tag_ids = activeFilters.map((filter) => filter.id);
     const payload = {
       query: input,
@@ -163,13 +176,12 @@ function FeatureSearch() {
       page: 1,
       page_size: 20,
     };
-    console.log("Payload: ", payload);
+    console.log("Handle Input Payload: ", payload);
     try {
       const response = await axios.post(
         "http://ec2-54-90-82-170.compute-1.amazonaws.com:9000/v1/events/search",
         payload
       );
-      console.log(response.data.activities);
       setActivities(response.data.activities);
       if (response.data.activities.length === 0) {
         setHasMoreData(false);
@@ -181,9 +193,17 @@ function FeatureSearch() {
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    if (isInitialRender) {
+      setIsInitialRender(false);
+    } else {
+      handleInputSubmit(filters);
+    }
+  }, [filters]);
+
   const handleOnKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      handleInputSubmit();
+      handleInputSubmit(filters);
     }
   };
 
@@ -193,7 +213,6 @@ function FeatureSearch() {
         filter.id === id ? { ...filter, isActive: isActive } : filter
       )
     );
-    console.log(filters);
   };
 
   const handleDateChange = (date: any) => {
