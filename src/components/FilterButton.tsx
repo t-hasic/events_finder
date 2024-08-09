@@ -1,11 +1,11 @@
 interface Props {
   id: number;
-  label: string;
+  title: string;
   isActive: boolean;
   onToggle: (isActive: boolean, id: number) => void;
 }
 
-function FilterButton({ id, label, isActive, onToggle }: Props) {
+function FilterButton({ id, title, isActive, onToggle }: Props) {
   const handleClick = () => {
     onToggle(!isActive, id);
   };
@@ -15,7 +15,7 @@ function FilterButton({ id, label, isActive, onToggle }: Props) {
       onClick={handleClick}
       className={`filter-button ${isActive ? "active" : ""}`}
     >
-      {label}
+      {title}
     </button>
   );
 }

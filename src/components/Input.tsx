@@ -2,6 +2,7 @@ import { ChangeEvent } from "react";
 
 import FilterDropdown from "./FilterDropdown";
 import FilterDateEntry from "./FilterDateEntry";
+import FeedbackForm from "./FeedbackForm";
 
 interface Props {
   value: any;
@@ -44,11 +45,12 @@ function Input({
   return (
     <div className="centered_input">
       <input
+        style={{ marginLeft: "1rem" }}
         type="text"
         value={value}
         onChange={onChange}
         onKeyDown={(e) => e.key === "Enter" && onKeyPress(e)}
-        placeholder="Enter your query here..."
+        placeholder="Tell me what you are looking for..."
         className="query_text_input"
       />
 
@@ -65,9 +67,16 @@ function Input({
       <FilterDateEntry onDateChange={handleDateChange} />
 
       <button
+        className="btn btn-primary"
+        style={{ margin: "8px", width: "20rem" }}
+      >
+        Give Feedback
+      </button>
+
+      <button
         onClick={onSubmit}
         className="btn btn-primary"
-        style={{ margin: "8px" }}
+        style={{ margin: "8px", marginRight: "1rem" }}
       >
         Submit
       </button>

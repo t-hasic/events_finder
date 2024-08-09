@@ -198,7 +198,7 @@
 }
 
 .filter-button {
-  padding: 8px 16px;
+  padding: 8px 1px;
   margin: 6px;
   font-size: 14px;
   border: 2px solid #007bff;
@@ -251,6 +251,12 @@
   position: absolute;
   left: 50%;
   top: 50%;
+}
+
+.page-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .activities-grid {

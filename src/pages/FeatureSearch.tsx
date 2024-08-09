@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { debounce } from "lodash";
 import React, { useState } from "react";
 
 import "../styles/App.css";
@@ -9,20 +10,24 @@ import FeedbackForm from "../components/FeedbackForm";
 import FilterButton from "../components/FilterButton";
 
 import axios from "axios";
+import PageLoading from "../components/PageLoading";
 
 interface Filter {
   id: any;
   code: any;
+  title: any;
   isActive: boolean;
 }
 
 function FeatureSearch() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [giveFeedback, setGiveFeedback] = useState(false);
+  const [page, setPage] = useState(1);
   const [inputValue, setInputValue] = useState("");
   const [dateValue, setDateValue] = useState(null);
   const [timeValue, setTimeValue] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasMoreData, setHasMoreData] = useState(true);
   const [filters, setFilters] = useState<Filter[]>([]);
+  const [pageLoading, setPageLoading] = useState(false);
   const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
@@ -41,14 +46,15 @@ function FeatureSearch() {
           start_date: null,
           start_time: null,
           tag_ids: [],
+          page: 1,
+          page_size: 20,
         };
-        console.log("Payload: ", payload);
+        console.log("Use Effect Payload: ", payload);
         try {
           const response = await axios.post(
             "http://ec2-54-90-82-170.compute-1.amazonaws.com:9000/v1/events/search",
             payload
           );
-          console.log(response.data.activities);
           setActivities(response.data.activities);
           setIsLoading(false);
         } catch (error) {
@@ -62,13 +68,9 @@ function FeatureSearch() {
     fetchData();
   }, []);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
+  const updateActivities = async () => {
+    if (!hasMoreData) return; // Exit early if there's no more data
 
-  const handleInputSubmit = async () => {
-    setActivities([]);
-    setIsLoading(true);
     let input: any = inputValue;
     if (inputValue === "") {
       input = null;
@@ -80,6 +82,81 @@ function FeatureSearch() {
       start_date: dateValue,
       start_time: timeValue,
       tag_ids: tag_ids,
+      page: page,
+      page_size: 20,
+    };
+    console.log("Update Activities Payload: ", payload);
+    try {
+      const response = await axios.post(
+        "http://ec2-54-90-82-170.compute-1.amazonaws.com:9000/v1/events/search",
+        payload
+      );
+      console.log(response.data.activities);
+      if (response.data.activities.length === 0) {
+        setHasMoreData(false);
+      } else {
+        setActivities((prevActivities) => [
+          ...prevActivities,
+          ...response.data.activities,
+        ]);
+      }
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      setHasMoreData(false); // Assume no more data in case of error
+    } finally {
+      setPageLoading(false);
+    }
+  };
+
+  const handleScroll = debounce(() => {
+    const scrollHeight = document.documentElement.scrollHeight;
+    const scrollTop = document.documentElement.scrollTop;
+    const clientHeight = document.documentElement.clientHeight;
+
+    if (
+      scrollTop + clientHeight >= scrollHeight &&
+      !pageLoading &&
+      hasMoreData
+    ) {
+      console.log("Handle Scroll Fired");
+      setPage((prevPage) => prevPage + 1);
+      setPageLoading(true);
+    }
+  }, 300);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll, hasMoreData]);
+
+  useEffect(() => {
+    if (page > 1) {
+      updateActivities();
+    }
+  }, [page]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleInputSubmit = async () => {
+    setActivities([]);
+    setIsLoading(true);
+    setHasMoreData(true); // Reset hasMoreData
+    setPage(1); // Reset page to 1
+    let input: any = inputValue;
+    if (inputValue === "") {
+      input = null;
+    }
+    const activeFilters = filters.filter((filter) => filter.isActive);
+    const tag_ids = activeFilters.map((filter) => filter.id);
+    const payload = {
+      query: input,
+      start_date: dateValue,
+      start_time: timeValue,
+      tag_ids: tag_ids,
+      page: 1,
+      page_size: 20,
     };
     console.log("Payload: ", payload);
     try {
@@ -89,10 +166,13 @@ function FeatureSearch() {
       );
       console.log(response.data.activities);
       setActivities(response.data.activities);
+      if (response.data.activities.length === 0) {
+        setHasMoreData(false);
+      }
     } catch (error) {
       console.error("Error fetching data: ", error);
+      setHasMoreData(false);
     }
-    setInputValue("");
     setIsLoading(false);
   };
 
@@ -109,7 +189,6 @@ function FeatureSearch() {
       )
     );
     console.log(filters);
-    // updateResults();
   };
 
   const handleDateChange = (date: any) => {
@@ -132,7 +211,7 @@ function FeatureSearch() {
             <FilterButton
               key={filter.id}
               id={filter.id}
-              label={filter.code}
+              title={filter.title}
               isActive={filter.isActive}
               onToggle={handleFilterToggle}
             />
@@ -148,35 +227,13 @@ function FeatureSearch() {
         onTimeChange={handleTimeChange}
       />
       {isLoading && <Loading />}
-      {activities.length > 0 && (
-        <Results
-          activities={activities}
-          class_name={"feature-results-scroll"}
-        />
-      )}
+      {activities.length > 0 && <Results activities={activities} />}
       {!isLoading && activities.length === 0 && (
         <h1 className="results-container">
           No Results - Try a different query...
         </h1>
       )}
-      {giveFeedback && (
-        <div className="feedback-container">
-          <FeedbackForm />
-        </div>
-      )}
-      {!isLoading && (
-        <div className="results-container">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => {
-              setGiveFeedback(!giveFeedback);
-            }}
-          >
-            Give Feedback
-          </button>
-        </div>
-      )}
+      {pageLoading && <PageLoading />}
     </>
   );
 }

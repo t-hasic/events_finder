@@ -2,18 +2,15 @@ import Activity from "./Activity";
 
 interface Props {
   activities: any[];
-  class_name: string;
 }
 
-function Results({ activities, class_name }: Props) {
+function Results({ activities }: Props) {
   return (
     <div className="results-container">
-      <div className={`${class_name} results-scroll`}>
-        <div className="activities-grid">
-          {activities.map((activity, index) => (
-            <Activity key={index} activity={activity} />
-          ))}
-        </div>
+      <div className="activities-grid">
+        {activities.map((activity, index) => (
+          <Activity key={index} activity={activity} />
+        ))}
       </div>
     </div>
   );
