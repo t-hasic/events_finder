@@ -29,6 +29,7 @@ function FeatureSearch() {
   const [filters, setFilters] = useState<Filter[]>([]);
   const [pageLoading, setPageLoading] = useState(false);
   const [activities, setActivities] = useState<any[]>([]);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,6 +140,10 @@ function FeatureSearch() {
     setInputValue(event.target.value);
   };
 
+  const handleFeedbackToggle = () => {
+    setShowFeedback(!showFeedback);
+  };
+
   const handleInputSubmit = async () => {
     setActivities([]);
     setIsLoading(true);
@@ -222,10 +227,16 @@ function FeatureSearch() {
         value={inputValue}
         onChange={handleInputChange}
         onSubmit={handleInputSubmit}
+        onFeedback={handleFeedbackToggle}
         onKeyPress={handleOnKeyPress}
         onDateChange={handleDateChange}
         onTimeChange={handleTimeChange}
       />
+      {showFeedback && (
+        <div className="feedback-container">
+          <FeedbackForm />
+        </div>
+      )}
       {isLoading && <Loading />}
       {activities.length > 0 && <Results activities={activities} />}
       {!isLoading && activities.length === 0 && (

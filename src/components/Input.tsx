@@ -2,12 +2,11 @@ import { ChangeEvent } from "react";
 
 import FilterDropdown from "./FilterDropdown";
 import FilterDateEntry from "./FilterDateEntry";
-import FeedbackForm from "./FeedbackForm";
-
 interface Props {
   value: any;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void;
+  onFeedback: () => void;
   onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onDateChange: (date: any) => void;
   onTimeChange: (time: any) => void;
@@ -17,6 +16,7 @@ function Input({
   value,
   onChange,
   onSubmit,
+  onFeedback,
   onKeyPress,
   onDateChange,
   onTimeChange,
@@ -67,6 +67,7 @@ function Input({
       <FilterDateEntry onDateChange={handleDateChange} />
 
       <button
+        onClick={onFeedback}
         className="btn btn-primary"
         style={{ margin: "8px", width: "20rem" }}
       >

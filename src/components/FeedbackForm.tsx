@@ -18,6 +18,9 @@ function FeedbackForm() {
         ></textarea>
         <label htmlFor="floatingTextarea">Comments</label>
       </div>
+      <button type="submit" className="btn btn-primary mt-3">
+        Submit
+      </button>
     </>
   );
 }
