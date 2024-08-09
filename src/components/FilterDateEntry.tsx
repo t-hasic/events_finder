@@ -2,9 +2,13 @@ import React, { useState } from "react";
 
 interface FilterDateEntryProps {
   onDateChange: (date: string) => void;
+  label: string;
 }
 
-const FilterDateEntry: React.FC<FilterDateEntryProps> = ({ onDateChange }) => {
+const FilterDateEntry: React.FC<FilterDateEntryProps> = ({
+  onDateChange,
+  label,
+}) => {
   const [date, setDate] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -19,7 +23,7 @@ const FilterDateEntry: React.FC<FilterDateEntryProps> = ({ onDateChange }) => {
   return (
     <div className="filter-date-entry">
       <button className="filter-date-toggle" onClick={handleToggle}>
-        {date || "Select Date"}
+        {date || <>{label}</>}
         <span className="arrow">{isOpen ? "▲" : "▼"}</span>
       </button>
       {isOpen && (

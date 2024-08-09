@@ -22,7 +22,8 @@ interface Filter {
 function FeatureSearch() {
   const [page, setPage] = useState(1);
   const [inputValue, setInputValue] = useState("");
-  const [dateValue, setDateValue] = useState(null);
+  const [startDateValue, setStartDateValue] = useState(null);
+  const [endDateValue, setEndDateValue] = useState(null);
   const [timeValue, setTimeValue] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -46,6 +47,7 @@ function FeatureSearch() {
         const payload = {
           query: null,
           start_date: null,
+          end_date: null,
           start_time: null,
           tag_ids: [],
           page: 1,
@@ -81,7 +83,8 @@ function FeatureSearch() {
     const tag_ids = activeFilters.map((filter) => filter.id);
     const payload = {
       query: input,
-      start_date: dateValue,
+      start_date: startDateValue,
+      end_date: endDateValue,
       start_time: timeValue,
       tag_ids: tag_ids,
       page: page,
@@ -170,7 +173,8 @@ function FeatureSearch() {
     const tag_ids = activeFilters.map((filter) => filter.id);
     const payload = {
       query: input,
-      start_date: dateValue,
+      start_date: startDateValue,
+      end_date: endDateValue,
       start_time: timeValue,
       tag_ids: tag_ids,
       page: 1,
@@ -215,11 +219,19 @@ function FeatureSearch() {
     );
   };
 
-  const handleDateChange = (date: any) => {
+  const handleStartDateChange = (date: any) => {
     if (date === "") {
-      setDateValue(null);
+      setStartDateValue(null);
     } else {
-      setDateValue(date);
+      setStartDateValue(date);
+    }
+  };
+
+  const handleEndDateChange = (date: any) => {
+    if (date === "") {
+      setEndDateValue(null);
+    } else {
+      setEndDateValue(date);
     }
   };
 
@@ -248,7 +260,8 @@ function FeatureSearch() {
         onSubmit={handleInputSubmit}
         onFeedback={handleFeedbackToggle}
         onKeyPress={handleOnKeyPress}
-        onDateChange={handleDateChange}
+        onStartDateChange={handleStartDateChange}
+        onEndDateChange={handleEndDateChange}
         onTimeChange={handleTimeChange}
       />
       {showFeedback && (

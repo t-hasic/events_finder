@@ -8,7 +8,8 @@ interface Props {
   onSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onFeedback: () => void;
   onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  onDateChange: (date: any) => void;
+  onStartDateChange: (date: any) => void;
+  onEndDateChange: (date: any) => void;
   onTimeChange: (time: any) => void;
 }
 
@@ -18,7 +19,8 @@ function Input({
   onSubmit,
   onFeedback,
   onKeyPress,
-  onDateChange,
+  onStartDateChange,
+  onEndDateChange,
   onTimeChange,
 }: Props) {
   const cityOptions = [{ value: "Boston", label: "Boston" }];
@@ -30,8 +32,12 @@ function Input({
     { value: "evening", label: "Evening" },
   ];
 
-  const handleDateChange = (date: any) => {
-    onDateChange(date);
+  const handleStartDateChange = (date: any) => {
+    onStartDateChange(date);
+  };
+
+  const handleEndDateChange = (date: any) => {
+    onEndDateChange(date);
   };
 
   const handleTimeChange = (option: { value: any; label: any }) => {
@@ -64,7 +70,11 @@ function Input({
         defaultOption={timeOptions[0]}
         onSelect={handleTimeChange}
       />
-      <FilterDateEntry onDateChange={handleDateChange} />
+      <FilterDateEntry
+        onDateChange={handleStartDateChange}
+        label={"Start Date"}
+      />
+      <FilterDateEntry onDateChange={handleEndDateChange} label={"End Date"} />
 
       <button
         onClick={onFeedback}
