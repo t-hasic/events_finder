@@ -1,3 +1,5 @@
+import { Rating } from "react-simple-star-rating";
+
 function FeedbackForm() {
   return (
     <>
@@ -17,6 +19,9 @@ function FeedbackForm() {
           id="floatingTextarea"
         ></textarea>
         <label htmlFor="floatingTextarea">Comments</label>
+      </div>
+      <div className="feedback-container">
+        <Rating onClick={() => {}} allowFraction={true} />
       </div>
       <button type="submit" className="btn btn-primary mt-3">
         Submit
