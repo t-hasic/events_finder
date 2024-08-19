@@ -21,16 +21,20 @@ interface Filter {
 
 function FeatureSearch() {
   const [page, setPage] = useState(1);
+  const [email, setEmail] = useState("");
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [searchId, setSearchId] = useState("");
   const [inputValue, setInputValue] = useState("");
-  const [startDateValue, setStartDateValue] = useState(null);
-  const [endDateValue, setEndDateValue] = useState(null);
   const [timeValue, setTimeValue] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [pageLoading, setPageLoading] = useState(false);
+  const [endDateValue, setEndDateValue] = useState(null);
   const [activities, setActivities] = useState<any[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [startDateValue, setStartDateValue] = useState(null);
   const [isInitialRender, setIsInitialRender] = useState(true);
 
   useEffect(() => {
@@ -59,6 +63,7 @@ function FeatureSearch() {
             "http://ec2-54-90-82-170.compute-1.amazonaws.com:9000/v1/events/search",
             payload
           );
+          setSearchId(response.data.id);
           setActivities(response.data.activities);
           setIsLoading(false);
         } catch (error) {
@@ -99,6 +104,7 @@ function FeatureSearch() {
       if (response.data.activities.length === 0) {
         setHasMoreData(false);
       } else {
+        setSearchId(response.data.id);
         setActivities((prevActivities) => [
           ...prevActivities,
           ...response.data.activities,
@@ -186,6 +192,8 @@ function FeatureSearch() {
         "http://ec2-54-90-82-170.compute-1.amazonaws.com:9000/v1/events/search",
         payload
       );
+      console.log(response.data.id);
+      setSearchId(response.data.id);
       setActivities(response.data.activities);
       if (response.data.activities.length === 0) {
         setHasMoreData(false);
@@ -239,6 +247,52 @@ function FeatureSearch() {
     setTimeValue(time);
   };
 
+  const handleFeedbackSubmit = async () => {
+    console.log("Feedback submitted");
+    setShowFeedback(false);
+    let commentAndEmail = "";
+    if (comment.length < 2) {
+      alert("Please enter a comment longer of at least 2 characters.");
+      return;
+    }
+    if (email === "") {
+      commentAndEmail = comment;
+    } else {
+      commentAndEmail = `${email} : ${comment}`;
+    }
+    const payload = {
+      feedback_text: commentAndEmail,
+      rating: rating,
+    };
+    // send patch request to backend
+    console.log("Feedback Payload: ", payload);
+    try {
+      const response = await axios.patch(
+        `http://ec2-54-90-82-170.compute-1.amazonaws.com:9000/v1/events/search/${searchId}/feedback`,
+        payload
+      );
+      console.log("Feedback Response: ", response);
+      setEmail("");
+      setComment("");
+    } catch (error) {
+      console.error("Error submitting feedback: ", error);
+    }
+  };
+
+  const handleRatingClick = (rating: any) => {
+    setRating(rating);
+  };
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
+
+  const handleCommentChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setComment(event.target.value);
+  };
+
   return (
     <>
       <div className="results-container">
@@ -266,7 +320,12 @@ function FeatureSearch() {
       />
       {showFeedback && (
         <div className="feedback-container">
-          <FeedbackForm />
+          <FeedbackForm
+            onEmailChange={handleEmailChange}
+            onCommentChange={handleCommentChange}
+            onSubmit={handleFeedbackSubmit}
+            onRatingClick={handleRatingClick}
+          />
         </div>
       )}
       {isLoading && <Loading />}
