@@ -1,10 +1,6 @@
 # Tailbox Events Finder Comparison
 
-Web app to test various events finder hypotheses:
-
-- OpenAI Embeddings vs. Tailbox Embeddings
-- Feature Search
-- Chatbot Search (+ Human in the Loop)
+Web app to observe the different user behaviors when searching for events.
 
 # Quickstart
 
